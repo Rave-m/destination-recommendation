@@ -59,7 +59,7 @@ for card in cards:
 print(f"Total link ditemukan: {len(all_links)}")
 
 # Simpan ke file JSON
-with open("helper/links.json", "w") as file:
+with open("results/links.json", "w") as file:
     json.dump(all_links, file, indent=4)
 
 # Tutup browser

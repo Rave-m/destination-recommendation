@@ -1,13 +1,12 @@
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
-from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from webdriver_manager.chrome import ChromeDriverManager
+
 import time
+import csv
 
 service = Service(executable_path="chromedriver.exe")
 driver = webdriver.Chrome(service=service)
@@ -39,39 +38,50 @@ products = driver.find_elements(By.CLASS_NAME, "ProductCardSearch_product_card_s
 # Looping dan ekstrak data
 for product in products:
     try:
-        title = product.find_element(By.TAG_NAME, "h2").text
+        nama_destinasi = product.find_element(By.TAG_NAME, "h2").text
     except:
-        title = "No title"
+        nama_destinasi = "tidak ada nama destinasi"
 
     try:
         location = product.find_element(By.CLASS_NAME, "product-info_info_text__JT1m3").text
     except:
-        location = "No location"
+        location = "tidak ada lokasi"
 
     try:
         price = product.find_element(By.CLASS_NAME, "ProductCardTTD_final_price_wrapper__QX7xp").text
     except:
-        price = "No price"
+        price = "tidak ada harga"
 
     try:
         rating = product.find_element(By.CLASS_NAME, "ProductCardTTD_product_info_variant__0XRBt").text
     except:
-        rating = "No rating"
+        rating = "tidak ada rating"
 
-    print(f"Title: {title}")
-    print(f"Location: {location}")
-    print(f"Price: {price}")
+    print(f"nama_destinasi: {nama_destinasi}")
+    print(f"lokasi: {location}")
+    print(f"harga: {price}")
     print(f"Rating: {rating}")
     print("-" * 50)
     
     data.append({
-        "title": title,
-        "location": location,
-        "price": price,
+        "nama_destinasi": nama_destinasi,
+        "lokasi": location,
+        "harga": price,
         "rating": rating
     })
+    
+with open("results/details.csv", "w", newline="", encoding="utf-8") as file:
+    fieldnames = ["nama_destinasi", "rating_destinasi", "harga", "lokasi"]
+    writer = csv.DictWriter(file, fieldnames=fieldnames)
+    writer.writeheader()
+
+    for item in data:
+        writer.writerow({
+            "nama_destinasi": item["nama_destinasi"],
+            "rating_destinasi": item["rating"],
+            "harga": item["harga"],
+            "lokasi": item["lokasi"]
+        })
 
 # Tutup browser setelah selesai
 driver.quit()
-
-print(data)

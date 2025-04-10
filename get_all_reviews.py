@@ -28,27 +28,39 @@ def ambil_review_di_halaman():
     for card in review_cards:
         try:
             name = card.find_element(By.CLASS_NAME, "ReviewCard_customer_name__mwGEt").text
+        except:
+            name = "Anonim"
+
+        try:
             rating = card.find_element(By.CLASS_NAME, "ReviewCard_review_card_header_right__riU1Q").text
+        except:
+            rating = ""
+
+        try:
             tanggal = card.find_element(By.CLASS_NAME, "ReviewCard_date__Nr8Lq").text
+        except:
+            tanggal = ""
+
+        try:
             komentar = card.find_element(By.CLASS_NAME, "ReadMoreComments_review_card_comment__R_W2B").text
+        except:
+            komentar = ""
 
-            # Klik tombol "Selengkapnya" jika ada
-            try:
-                selengkapnya_btn = card.find_element(By.CLASS_NAME, "ReadMoreComments_read_more__r2ZQ7")
-                driver.execute_script("arguments[0].click();", selengkapnya_btn)
-                time.sleep(0.3)
-            except:
-                pass  # tombol tidak ditemukan, lanjutkan
+        # Klik tombol "Selengkapnya" jika ada
+        try:
+            selengkapnya_btn = card.find_element(By.CLASS_NAME, "ReadMoreComments_read_more__r2ZQ7")
+            driver.execute_script("arguments[0].click();", selengkapnya_btn)
+            time.sleep(0.3)
+        except:
+            pass  # tombol tidak ditemukan, lanjutkan
 
-            reviews.append({
-                "username": name,
-                "komentar": komentar,
-                "rating": rating,
-                "tanggal": tanggal
-            })
+        reviews.append({
+            "username": name,
+            "komentar": komentar,
+            "rating": rating,
+            "tanggal": tanggal
+        })
             
-        except Exception as e:
-            print("Gagal mengambil data dari card:", e)
     return reviews
 
 def simpan_checkpoint(filepath="helper/checkpoint_reviews.csv", data=None):
@@ -151,15 +163,15 @@ for idx, link in enumerate(links):
     time.sleep(3)
 
 # Simpan ke file CSV
-with open("helper/reviews.csv", "w", newline="", encoding="utf-8") as file:
-    fieldnames = ["nama_destinasi", "name", "komentar", "rating", "tanggal"]
+with open("results/reviews.csv", "w", newline="", encoding="utf-8") as file:
+    fieldnames = ["nama_destinasi", "username", "komentar", "rating", "tanggal"]
     writer = csv.DictWriter(file, fieldnames=fieldnames)
     writer.writeheader()
 
     for item in review_list:
         writer.writerow({
             "nama_destinasi": item["nama_destinasi"],
-            "name": item["review"]["name"],
+            "username": item["review"]["username"],
             "komentar": item["review"]["komentar"],
             "rating": item["review"]["rating"],
             "tanggal": item["review"]["tanggal"]
